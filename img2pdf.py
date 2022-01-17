@@ -1,7 +1,10 @@
 import sys
 from tkinter import *
 from tkinter import filedialog as fd
+from tkinter import messagebox
 from PIL import Image
+
+BACKGROUND_COLOR = '#bbbbbb'
 
 def listbox_init():
     listbox.insert(END, f'No files selected')
@@ -18,6 +21,13 @@ def add_files():
         listbox.insert(END, f'{img_path}')
 
 def delete_files():
+    if not listbox.curselection():
+        warning('No files selected!')
+        return
+
+    if not askokcancel('Do you want to delete selected files?'):
+        return
+
     while listbox.curselection():
         listbox.delete(listbox.curselection()[0])
 
@@ -26,6 +36,7 @@ def delete_files():
 
 def save_pdf():
     if listbox['state'] == DISABLED:
+        warning('No files to convert!')
         return
 
     images = []
@@ -38,6 +49,8 @@ def save_pdf():
 
     images[0].save(out_fname, save_all = True, quality=100, append_images = images[1:])
 
+    info('File succesfully generated!')
+
 def center_app(width, height):
     screen_width = app.winfo_screenwidth()
     screen_height = app.winfo_screenheight()
@@ -46,17 +59,29 @@ def center_app(width, height):
     y_cordinate = int((screen_height/2) - (height/2))
     return f'{width}x{height}+{x_cordinate}+{y_cordinate}'
 
+def askokcancel(message) -> bool:
+    return messagebox.askokcancel('Are you sure?', message)
+
+def info(message):
+    messagebox.showinfo('Info', message)
+
+def warning(message):
+    messagebox.showwarning('Warning', message)
+
+def error(message):
+    messagebox.showerror('Error', message)
+
 app = Tk()
 # App
-app.config(bg='#bbbbbb')
+app.config(bg=BACKGROUND_COLOR)
 app.title('Converter img2pdf')
 app.geometry(center_app(500, 250))
 app.minsize(250, 250)
 
 # Frames
-controls_frame = Frame(app, bg='#bbbbbb')
-text_frame = Frame(app, bg='#bbbbbb')
-bottom_frame = Frame(app, bg='#bbbbbb')
+controls_frame = Frame(app, bg=BACKGROUND_COLOR)
+text_frame = Frame(app, bg=BACKGROUND_COLOR)
+bottom_frame = Frame(app, bg=BACKGROUND_COLOR)
 
 # Buttons
 open_button = Button(controls_frame, text='Add image / images', command=add_files)
