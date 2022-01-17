@@ -30,9 +30,9 @@ def save_pdf():
 
     images = []
     for img_path in listbox.get(0, END):
-        images.append(Image.open(img_path))
+        images.append(Image.open(img_path).convert('RGB'))
 
-    out_fname = fd.asksaveasfilename(filetypes=[('PDF file', '*.pdf')])
+    out_fname = fd.asksaveasfilename(defaultextension='pdf', filetypes=[('PDF file', '*.pdf')])
     if not out_fname:
         return
 
